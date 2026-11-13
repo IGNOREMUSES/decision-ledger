@@ -1,0 +1,11 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { makeDecision, assertImport, exportData, summarize } from '../src/core.js';
+const record = () => makeDecision({ title: 'Keep interface stable', rationale: 'Hardware changes should not break UI.', status: 'approved', source: 'user', project: 'Sample' }, 'id-1');
+test('creates explicit decision record', () => { const r = record(); assert.equal(r.source, 'user'); assert.equal(r.status, 'approved'); });
+test('rejects blank title', () => assert.throws(() => makeDecision({ title: '  ', status: 'proposed', source: 'user' }, 'x')));
+test('rejects invalid source or status', () => { assert.throws(() => makeDecision({ title: 'T', status: 'wrong', source: 'user' }, 'x')); assert.throws(() => makeDecision({ title: 'T', status: 'approved', source: 'wrong' }, 'x')); });
+test('round trips portable JSON', () => { const original = record(); assert.deepEqual(assertImport(JSON.parse(exportData([original]))), [original]); });
+test('rejects duplicate record ids', () => assert.throws(() => assertImport({schemaVersion:1, decisions:[record(),record()]})));
+test('rejects bad import schema', () => assert.throws(() => assertImport({schemaVersion:2, decisions:[]})));
+test('summarizes statuses', () => { const x=summarize([record()]); assert.equal(x.approved,1); assert.equal(x.proposed,0); });
