@@ -1,0 +1,12 @@
+{
+  "name": "decision-ledger",
+  "version": "1.0.0",
+  "private": true,
+  "description": "An offline-first decision log for projects, with a standalone web app and portable JSON exports.",
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/*.test.js",
+    "serve": "python -m http.server 8080"
+  },
+  "license": "MIT"
+}
